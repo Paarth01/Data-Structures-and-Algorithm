@@ -146,6 +146,20 @@ struct Node* deleteAfterNode(struct Node* head, int targetData) {
     return head;
 }
 
+// Function to delete a node from the beginning
+struct Node* deleteFromBeginning(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return head;
+    }
+    struct Node* temp = head;
+    head = head->next;
+    free(temp);
+    printf("Node deleted from the beginning.\n");
+    return head;
+}
+
+
 // Function to delete a node before a specific node
 struct Node* deleteBeforeNode(struct Node* head, int targetData) {
     if (head == NULL || head->next == NULL) {
@@ -213,19 +227,6 @@ struct Node* deleteAtPosition(struct Node* head, int position) {
     free(temp);
     printf("Node deleted at position %d.\n", position);
 
-    return head;
-}
-
-// Function to delete a node from the beginning
-struct Node* deleteFromBeginning(struct Node* head) {
-    if (head == NULL) {
-        printf("List is empty.\n");
-        return head;
-    }
-    struct Node* temp = head;
-    head = head->next;
-    free(temp);
-    printf("Node deleted from the beginning.\n");
     return head;
 }
 

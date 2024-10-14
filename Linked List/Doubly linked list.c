@@ -51,7 +51,6 @@ struct Node* insertAtPosition(struct Node* head, int position, int data) {
     struct Node* temp = head;
     int currentPos = 1;
 
-    // Traverse to find the position just before the desired index
     while (temp != NULL && currentPos < position - 1) {
         temp = temp->next;
         currentPos++;
@@ -79,7 +78,6 @@ struct Node* insertAtPosition(struct Node* head, int position, int data) {
 struct Node* insertAfterNode(struct Node* head, int targetData, int data) {
     struct Node* temp = head;
 
-    // Traverse to find the target node
     while (temp != NULL && temp->data != targetData) {
         temp = temp->next;
     }
@@ -115,7 +113,6 @@ struct Node* insertBeforeNode(struct Node* head, int targetData, int data) {
 
     struct Node* temp = head;
 
-    // Traverse to find the target node
     while (temp != NULL && temp->data != targetData) {
         temp = temp->next;
     }
@@ -221,9 +218,33 @@ void displayList(struct Node* head) {
         return;
     }
     struct Node* temp = head;
+    printf("List: ");
     while (temp != NULL) {
         printf("%d <-> ", temp->data);
         temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to display the list backwards
+void displayListBackwards(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = head;
+
+    // Traverse to the last node
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    // Traverse backward and print the list
+    printf("List (Backwards): ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->prev;
     }
     printf("NULL\n");
 }
@@ -243,7 +264,8 @@ int main() {
         printf("6. Delete from beginning\n");
         printf("7. Delete from end\n");
         printf("8. Display list\n");
-        printf("9. Exit\n");
+        printf("9. Display list backwards\n");
+        printf("10. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -289,6 +311,9 @@ int main() {
                 displayList(head);
                 break;
             case 9:
+                displayListBackwards(head);
+                break;
+            case 10:
                 printf("Exiting...\n");
                 exit(0);
             default:

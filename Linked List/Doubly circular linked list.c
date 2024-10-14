@@ -18,80 +18,89 @@ struct Node* createNode(int data) {
 }
 
 // Function to insert a node at the end of the list
-void insertEnd(struct Node** head, int data) {
+struct Node* insertEnd(struct Node* head, int data) {
     struct Node* newNode = createNode(data);
-    if (*head == NULL) {
-        *head = newNode;
-        return;
+    if (head == NULL) {
+        return newNode;
     }
 
-    struct Node* last = (*head)->prev;
+    struct Node* last = head->prev;
 
     // Adjusting the pointers for circularity and doubly links
-    newNode->next = *head;
-    (*head)->prev = newNode;
+    newNode->next = head;
+    head->prev = newNode;
     newNode->prev = last;
     last->next = newNode;
+
+    return head;
 }
 
 // Function to insert a node at the beginning of the list
-void insertBegin(struct Node** head, int data) {
+struct Node* insertBegin(struct Node* head, int data) {
     struct Node* newNode = createNode(data);
 
-    if (*head == NULL) {
-        *head = newNode;
-        return;
+    if (head == NULL) {
+        return newNode;
     }
 
-    struct Node* last = (*head)->prev;
+    struct Node* last = head->prev;
 
-    newNode->next = *head;
+    newNode->next = head;
     newNode->prev = last;
     last->next = newNode;
-    (*head)->prev = newNode;
+    head->prev = newNode;
 
-    *head = newNode;
+    return newNode;  // Return the new node as the new head
 }
 
 // Function to delete a node from the list
-void deleteNode(struct Node** head, int key) {
-    if (*head == NULL)
-        return;
+struct Node* deleteNode(struct Node* head, int key) {
+    if (head == NULL)
+        return NULL;
 
-    struct Node* temp = *head;
+    struct Node* temp = head;
     struct Node* prev = NULL;
 
     while (temp->data != key) {
-        if (temp->next == *head) {
+        if (temp->next == head) {
             printf("Node with value %d not found.\n", key);
-            return;
+            return head;
         }
         prev = temp;
         temp = temp->next;
     }
 
-    if (temp->next == *head && prev == NULL) {
+    // Single node case
+    if (temp->next == head && temp->prev == head) {
         free(temp);
-        *head = NULL;
-        return;
+        return NULL;
     }
 
-    if (temp == *head) {
-        prev = (*head)->prev;
-        *head = (*head)->next;
-        prev->next = *head;
-        (*head)->prev = prev;
+    // If the node to be deleted is the head node
+    if (temp == head) {
+        prev = head->prev;
+        head = head->next;
+        prev->next = head;
+        head->prev = prev;
         free(temp);
-    } else if (temp->next == *head) {
-        prev->next = *head;
-        (*head)->prev = prev;
-        free(temp);
-    } else {
-        struct Node* next = temp->next;
-        prev->next = next;
-        next->prev = prev;
-        free(temp);
+        return head;
     }
+
+    // If the node to be deleted is the last node
+    if (temp->next == head) {
+        prev->next = head;
+        head->prev = prev;
+        free(temp);
+        return head;
+    }
+
+    // For other nodes
+    struct Node* next = temp->next;
+    prev->next = next;
+    next->prev = prev;
+    free(temp);
+
+    return head;
 }
 
 // Function to display the list
@@ -128,17 +137,17 @@ int main() {
             case 1:
                 printf("Enter value to insert at beginning: ");
                 scanf("%d", &value);
-                insertBegin(&head, value);
+                head = insertBegin(head, value);
                 break;
             case 2:
                 printf("Enter value to insert at end: ");
                 scanf("%d", &value);
-                insertEnd(&head, value);
+                head = insertEnd(head, value);
                 break;
             case 3:
                 printf("Enter the value to delete: ");
                 scanf("%d", &key);
-                deleteNode(&head, key);
+                head = deleteNode(head, key);
                 break;
             case 4:
                 displayList(head);

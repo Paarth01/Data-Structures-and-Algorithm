@@ -18,24 +18,28 @@ struct Node* createNode(int coeff, int exp) {
 }
 
 // Function to insert a new node in a sorted order (by exponent)
-void insertNode(struct Node** head, int coeff, int exp) {
+struct Node* insertNode(struct Node* head, int coeff, int exp) {
     struct Node* newNode = createNode(coeff, exp);
-    
-    if (*head == NULL || (*head)->exp < exp) {
-        newNode->next = *head;
-        *head = newNode;
-    } else {
-        struct Node* temp = *head;
-        while (temp->next != NULL && temp->next->exp >= exp) {
-            temp = temp->next;
-        }
-        if (temp->exp == exp) {
-            temp->coeff += coeff;  // Combine like terms
-        } else {
-            newNode->next = temp->next;
-            temp->next = newNode;
-        }
+
+    if (head == NULL || head->exp < exp) {
+        newNode->next = head;
+        return newNode;
     }
+
+    struct Node* temp = head;
+    while (temp->next != NULL && temp->next->exp >= exp) {
+        temp = temp->next;
+    }
+
+    if (temp->exp == exp) {
+        temp->coeff += coeff;  // Combine like terms
+        free(newNode);  // No need to insert a new node, so free it
+    } else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+
+    return head;
 }
 
 // Function to display a polynomial
@@ -56,32 +60,33 @@ void displayPoly(struct Node* head) {
 // Function to add two polynomials
 struct Node* addPoly(struct Node* poly1, struct Node* poly2) {
     struct Node* result = NULL;
+
     while (poly1 != NULL && poly2 != NULL) {
         if (poly1->exp > poly2->exp) {
-            insertNode(&result, poly1->coeff, poly1->exp);
+            result = insertNode(result, poly1->coeff, poly1->exp);
             poly1 = poly1->next;
         } else if (poly1->exp < poly2->exp) {
-            insertNode(&result, poly2->coeff, poly2->exp);
+            result = insertNode(result, poly2->coeff, poly2->exp);
             poly2 = poly2->next;
         } else {
-            insertNode(&result, poly1->coeff + poly2->coeff, poly1->exp);
+            result = insertNode(result, poly1->coeff + poly2->coeff, poly1->exp);
             poly1 = poly1->next;
             poly2 = poly2->next;
         }
     }
-    
+
     // Add remaining terms of poly1, if any
     while (poly1 != NULL) {
-        insertNode(&result, poly1->coeff, poly1->exp);
+        result = insertNode(result, poly1->coeff, poly1->exp);
         poly1 = poly1->next;
     }
-    
+
     // Add remaining terms of poly2, if any
     while (poly2 != NULL) {
-        insertNode(&result, poly2->coeff, poly2->exp);
+        result = insertNode(result, poly2->coeff, poly2->exp);
         poly2 = poly2->next;
     }
-    
+
     return result;
 }
 
@@ -97,7 +102,7 @@ int main() {
     for (int i = 0; i < n; i++) {
         printf("Enter coefficient and exponent for term %d: ", i + 1);
         scanf("%d %d", &coeff, &exp);
-        insertNode(&poly1, coeff, exp);
+        poly1 = insertNode(poly1, coeff, exp);
     }
 
     // Input for second polynomial
@@ -106,7 +111,7 @@ int main() {
     for (int i = 0; i < n; i++) {
         printf("Enter coefficient and exponent for term %d: ", i + 1);
         scanf("%d %d", &coeff, &exp);
-        insertNode(&poly2, coeff, exp);
+        poly2 = insertNode(poly2, coeff, exp);
     }
 
     printf("Polynomial 1: ");
